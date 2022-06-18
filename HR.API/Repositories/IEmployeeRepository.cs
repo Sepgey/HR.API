@@ -9,5 +9,6 @@ namespace HR.API.Repositories
         public Task<string> UpdateEmployee(int id, Employee employee);
         public Task<string> SaveEmployee(Employee employee);
         public Task<string> DeleteEmployee(int id);
+        // de
     }
 }
