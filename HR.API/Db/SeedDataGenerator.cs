@@ -51,6 +51,15 @@ namespace HR.API.Db
                         FathersName = "Victor White",
                         MothersName = "Alexa White",
                         DateOfBirth = new DateTime(2021, 03, 17, 00, 00, 00)
+                    },
+
+                    new Employee
+                    {
+                        Name = "Dany Green",
+                        Designation = "Junior. Software Engineer",
+                        FathersName = "Alex Green",
+                        MothersName = "Inga Green",
+                        DateOfBirth = new DateTime(2021, 03, 17, 00, 00, 00)
                     }
                 );
                 context.SaveChanges();

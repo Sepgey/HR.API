@@ -1,0 +1,44 @@
+﻿pipeline {  
+ agent any  
+ environment {  
+  dotnet = 'C:\\Program Files\\dotnet\\dotnet.exe'  
+ }  
+ stages {  
+  stage('Checkout') {  
+   steps {
+       git credentialsId: '377c73ef-3419-45df-9b46-9fe2f076c69f', url: 'https://github.com/Sepgey/HR.API.git', branch: 'master'
+   }  
+  }  
+ stage('Build') {  
+   steps {  
+    bat 'dotnet build %WORKSPACE%\\HR.API\\HR.API\\HR.API.API.sln --configuration Release' 
+    //bat 'dotnet build C:\\ProgramData\\Jenkins\\.jenkins\\workspace\\HRMPipelines\\jenkins-demo\\HRM\\HRM.sln --configuration Release'  
+   }  
+  }  
+  stage('Test') {  
+   steps {  
+    bat 'dotnet test %WORKSPACE%\\HR.API\\HR.API\\HR.Test\\HR.Test.csproj --logger:trx'  
+   }  
+  }
+  
+  stage("Release"){
+      steps {
+      bat 'dotnet build  %WORKSPACE%\\HR.API\\HR.API\\HR.API.sln /p:PublishProfile=" %WORKSPACE%\\HR.API\\HR.API\\HR.API\\Properties\\PublishProfiles\\JenkinsProfile.pubxml" /p:Platform="Any CPU" /p:DeployOnBuild=true /m'
+    }
+  }
+  
+  stage('Deploy') {
+    steps {
+    // Stop IIS
+    bat 'net stop "w3svc"'
+    
+    // Deploy package to IIS
+    bat '"C:\\Program Files (x64)\\IIS\\Microsoft Web Deploy V3\\msdeploy.exe" -verb:sync -source:package="%WORKSPACE%\\HR.API\\HR.API\\HR.API\\bin\\Debug\\net6.0\\HR.API.zip" -dest:auto -setParam:"IIS Web Application Name"="HR.Web" -skip:objectName=filePath,absolutePath=".\\\\PackageTmp\\\\Web.config$" -enableRule:DoNotDelete -allowUntrusted=true'
+    
+    // Start IIS again
+    bat 'net start "w3svc"'
+    }
+ }
+
+ }  
+}
